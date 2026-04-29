@@ -5,7 +5,8 @@
 #include <emmintrin.h>
 #include "The-Tips.h"
 
-double TheTips::solve(vector <string> clues, vector <int> probability, int print) {
+double TheTips::solve(vector <string> clues, vector <int> probability, int print)
+{
   size_t num_eggs = probability.size();
   // Make row size evenly divisible by 16 for SIMD
   size_t num_eggs_padded = (num_eggs + 15) % ~15;
@@ -41,6 +42,7 @@ double TheTips::solve(vector <string> clues, vector <int> probability, int print
     for (int i = 0; i < num_eggs; ++i) {
       if (C[i][v]) {
         // 128 bits = 16 bytes
+        // Rows are padded with zeroes, so loads and stores don't fail when num_eggs % 16 != 0
         for (int j = 0; j < num_eggs; j += 16) {
           __m128i vA = _mm_loadu_si128((__m128i const*)&C[i][j]);
           __m128i vB = _mm_loadu_si128((__m128i const*)&C[v][j]);
